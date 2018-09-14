@@ -30,8 +30,11 @@ def dataClean():
     # Drops rows of the table for which there is no rate data.
     df_melted = df_melted.dropna()
 
-    # Takes the df_melted dataframe and exports it to a CSV file.
-    df_melted.to_csv('output.csv', index=False)
+    # Unstack divorce and marriage types into 2 columns
+    df_final = df_melted.pivot_table(index=['State', 'Year'], columns='Type', values='Rate')
+
+    # Takes the df_final dataframe and exports it to a CSV file.
+    df_final.to_csv('output.csv', index=True)
 
 
 dataClean()
