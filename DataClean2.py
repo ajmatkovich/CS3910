@@ -46,6 +46,8 @@ def mardivClean():
     # Takes the df_final dataframe and exports it to a CSV file.
     df_final.to_csv('mdOut.csv', index=True)
 
+    # Incomplete section
+'''
 def medincomeClean():
 
     # dataframe for current dollars table
@@ -55,10 +57,16 @@ def medincomeClean():
     df2 = pd.read_excel("h08.xls", skiprows=59, skip_footer=1, header=[0,1])
 
     # flatten df1 column headers and format them correctly
-    df1.columns = pd.Index([str(e[0]) + ' ' + str(e[1]) for e in df1.columns.tolist()])  # flatten
-    df1.columns = df1.columns.str.replace('\(.*\)', '') # get rid of the things in parentheses
-    df1.columns = df1.columns.str.replace('  ', ' ') # get rid of the double spaces
-    df1.columns = df1.columns.str.replace('\n', ' ') # get rid of the newline characters and replace with spaces
+    #df1.columns = pd.Index([str(e[0]) + ' ' + str(e[1]) for e in df1.columns.tolist()])  # flatten
+    #df1.columns = df1.columns.str.replace('\(.*\)', '') # get rid of the things in parentheses
+    #df1.columns = df1.columns.str.replace('  ', ' ') # get rid of the double spaces
+    #df1.columns = df1.columns.str.replace('\n', ' ') # get rid of the newline characters and replace with spaces
+
+
+    df1.columns = df1.columns.rename(names=['Year', 'Type'], level=None, inplace=False)
+    df1.index = df1.index.rename('State', inplace=False)
+
+
 
     # flatten df2 column headers and format them correctly
     df2.columns = pd.Index([str(e[0]) + ' ' + str(e[1]) for e in df2.columns.tolist()]) #flatten
@@ -66,7 +74,9 @@ def medincomeClean():
     df2.columns = df2.columns.str.replace('  ', ' ')  # get rid of the double spaces
     df2.columns = df2.columns.str.replace('\n', ' ')  # get rid of the newline characters and replace with spaces
 
-    df1.to_csv('test1.csv')
-    df2.to_csv('test2.csv')
-
-medincomeClean()
+    print(df1.head())
+    #df2.to_csv('test2.csv')
+'''
+#medincomeClean()
+crimesClean()
+mardivClean()
