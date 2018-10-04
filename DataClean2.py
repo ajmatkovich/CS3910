@@ -1,5 +1,6 @@
 import pandas as pd
 
+# Clean the violent crimes dataset
 def crimesClean():
 
     # read the original CSV file with uncleaned data and put it into a pandas dataframe
@@ -14,6 +15,7 @@ def crimesClean():
     # outputs the long format table to a new csv
     df_melted.to_csv('vcOut.csv', index=False)
 
+# Clean the marriage and divorce dataset
 def mardivClean():
 
     # read the original CSV file with uncleaned data and put it into a pandas dataframe
@@ -47,36 +49,40 @@ def mardivClean():
     df_final.to_csv('mdOut.csv', index=True)
 
     # Incomplete section
-'''
+
+# Clean the median income dataset
 def medincomeClean():
 
-    # dataframe for current dollars table
-    df1 = pd.read_excel("h08.xls", skiprows=4, skip_footer=56, header=[0,1])
+    # get dataframes from excel sheets
+    df1 = pd.read_excel("h08.xls", skiprows=3, nrows=53, header=[0, 1, 2])
+    df2 = pd.read_excel("h08.xls", skiprows=58, nrows=53, header=[0, 1, 2])
 
-    # dataframe for 2017 dollars table
-    df2 = pd.read_excel("h08.xls", skiprows=59, skip_footer=1, header=[0,1])
+    # use stack to put tables in long format
+    df1 = df1.stack([0, 1]).reset_index()
+    df2 = df2.stack([0, 1]).reset_index()
 
-    # flatten df1 column headers and format them correctly
-    #df1.columns = pd.Index([str(e[0]) + ' ' + str(e[1]) for e in df1.columns.tolist()])  # flatten
-    #df1.columns = df1.columns.str.replace('\(.*\)', '') # get rid of the things in parentheses
-    #df1.columns = df1.columns.str.replace('  ', ' ') # get rid of the double spaces
-    #df1.columns = df1.columns.str.replace('\n', ' ') # get rid of the newline characters and replace with spaces
+    # Rename the columns so they properly reflect the values in them
+    column_names = ['State', 'Dollar Type', 'Year', 'Dollars', 'std_dev']
+    df1.columns = column_names
+    df2.columns = column_names
 
+    # Drop the Dollar Type column. It is not needed since each table will have its own output (one for current dollar
+    # and one for 2017 dollar)
+    df1 = df1.drop('Dollar Type', axis=1)
+    df2 = df2.drop('Dollar Type', axis=1)
 
-    df1.columns = df1.columns.rename(names=['Year', 'Type'], level=None, inplace=False)
-    df1.index = df1.index.rename('State', inplace=False)
+    # extract the year code to a different column
+    df1['Year Code'] = df1['Year'].str.extract(r'\((.*?)\)')
+    df2['Year Code'] = df2['Year'].str.extract(r'\((.*?)\)')
 
+    # remove the year code from the Year column
+    df1['Year'] = df1['Year'].astype(str).str[:4]
+    df2['Year'] = df2['Year'].astype(str).str[:4]
 
+    # export to csv
+    df1.to_csv('curdollar.csv')
+    df2.to_csv('17dollar.csv')
 
-    # flatten df2 column headers and format them correctly
-    df2.columns = pd.Index([str(e[0]) + ' ' + str(e[1]) for e in df2.columns.tolist()]) #flatten
-    df2.columns = df2.columns.str.replace('\(.*\)', '')  # get rid of the things in parentheses
-    df2.columns = df2.columns.str.replace('  ', ' ')  # get rid of the double spaces
-    df2.columns = df2.columns.str.replace('\n', ' ')  # get rid of the newline characters and replace with spaces
-
-    print(df1.head())
-    #df2.to_csv('test2.csv')
-'''
-#medincomeClean()
+medincomeClean()
 crimesClean()
 mardivClean()
