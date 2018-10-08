@@ -21,6 +21,7 @@ def votEl():
 
     # Get rid of the total United States population values since they throw off the scale in Tableau
     df = df[df['State'] != 'United States']
+    df = df[df['State'] != 'United States (Excl. Louisiana)']
 
     # Export cleaned data to new CSV
     df.to_csv('voteout.csv', index=False)
