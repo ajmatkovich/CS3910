@@ -19,6 +19,9 @@ def votEl():
     # Create a new column with the total number of ineligible voters.
     df['Voting Ineligible Population'] = df['Voting Age Population'] - df['Voting Eligible Population']
 
+    # Get rid of the total United States population values since they throw off the scale in Tableau
+    df = df[df['State'] != 'United States']
+
     # Export cleaned data to new CSV
     df.to_csv('voteout.csv', index=False)
 
