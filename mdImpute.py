@@ -34,21 +34,34 @@ def mdImpute():
 
     df = pd.read_csv('mdLong_nulls.csv', na_values='null', header=0, index_col='State')
 
-    # Backward fills
+    # Fill null values for every state where we decided to use a backward fill
     df.loc['Colorado', 'Divorce'] = df.loc['Colorado', 'Divorce'].fillna(method='bfill')
     df.loc['Oklahoma', 'Marriage'] = df.loc['Oklahoma', 'Marriage'].fillna(method='bfill')
 
-    # Forward fills
+    # Fill null values for every state where we decided to use a forward fill
     df.loc['California', 'Divorce'] = df.loc['California', 'Divorce'].fillna(method='ffill')
     df.loc['Minnesota', 'Divorce'] = df.loc['Minnesota', 'Divorce'].fillna(method='ffill')
     df.loc['Louisiana', 'Marriage'] = df.loc['Louisiana', 'Marriage'].fillna(method='ffill')
 
-    # Mean fills
+    # Full null values for every state where we decided to use mean fill
     df.loc['Georgia', 'Divorce'] = df.loc['Georgia', 'Divorce'].fillna(df.loc['Georgia', 'Divorce'].mean())
+    df.loc['Hawaii', 'Divorce'] = df.loc['Hawaii', 'Divorce'].fillna(df.loc['Hawaii', 'Divorce'].mean())
+    df.loc['Louisiana', 'Divorce'] = df.loc['Louisiana', 'Divorce'].fillna(df.loc['Louisiana', 'Divorce'].mean())
+    df.loc['Oklahoma', 'Divorce'] = df.loc['Oklahoma', 'Divorce'].fillna(df.loc['Oklahoma', 'Divorce'].mean())
 
-    # temporary for viewing specific stats
-    print(df.loc['Georgia'])
+    # Fill the rest with the mean from every year (at this point, it should just be Indiana divorce that's missing.
+    df = df.fillna(df.groupby(['Year']).transform('mean'))
 
+    # Round all the values in the table to one decimal place (as in the original table)
+    df = df.round(decimals=1)
+
+    # Export the filled table to a new CSV file
+    df.to_csv('mdrates_filled.csv')
+
+    # make sure the table lengths stay the same after null value imputation
+    print('Table lengths equal?')
+    if len(pd.read_csv('mdrates_filled.csv')) == len(pd.read_csv('mdLong_nulls.csv')):
+        print('Yes')
 
 mdLongformat()
 mdImpute()
